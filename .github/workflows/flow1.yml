@@ -1,5 +1,4 @@
 name: JDS
-  run-name: JDS by ${{ github.foo }} 
 
 on:
   workflow_dispatch:
