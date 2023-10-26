@@ -56,5 +56,5 @@ on:
     - name: foo one
       run-name: foo run one
       run: |
-      env
+        env
 
