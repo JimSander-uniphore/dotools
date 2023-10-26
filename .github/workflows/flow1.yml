@@ -45,12 +45,11 @@ on:
              description: "String 4"
              required: false
 
-  workflow_call:
-  jobs:
-    runs-on: ubuntu-22.04
-    steps:
-    - name: foo one
-      run-name: foo run one
-      run: |
-        env
+jobs:
+  runs-on: ubuntu-22.04
+  steps:
+  - name: foo one
+    run-name: foo run one
+    run: |
+      env
 
