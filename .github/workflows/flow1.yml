@@ -1,4 +1,4 @@
-run-name: JDS flow1 ${{ env.GITHUB_RUN_ATTEMPT }}
+run-name: JDS flow1 ${{ github.GITHUB_RUN_ATTEMPT }}
 
 on:
   workflow_dispatch:
@@ -29,19 +29,20 @@ on:
              description: "String 6"
              required: false
       vn1:
-             type: string
+             type: number
              description: "String 1"
+             default: 3
              required: true
       vn2:
-             type: string
+             type: number
              description: "String 2"
              required: false
       vn3:
-             type: string
+             type: number
              description: "String 3"
              required: false
       vn4:
-             type: string
+             type: number
              description: "String 4"
              required: false
 
