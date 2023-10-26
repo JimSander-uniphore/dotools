@@ -54,6 +54,6 @@ jobs:
       region: us
 
   steps:
-  - name: foo one
-    run: |
-      env
+    - name: foo one
+      run: |
+        env
