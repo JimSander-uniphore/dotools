@@ -1,4 +1,4 @@
-name: JDS
+run-name: JDS flow1 ${{ env.GITHUB_RUN_ATTEMPT }}
 
 on:
   workflow_dispatch:
@@ -47,7 +47,7 @@ on:
 
 jobs:
   job1: 
-    runs-on: linux
+    runs-on: ubuntu-latest
   
     env:
       platform: azure
@@ -55,6 +55,5 @@ jobs:
 
   steps:
   - name: foo one
-    run-name: foo run one
     run: |
       env
