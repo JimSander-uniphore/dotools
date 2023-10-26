@@ -28,10 +28,6 @@ on:
              type: string
              description: "String 6"
              required: false
-      vs7:
-             type: string
-             description: "String 7"
-             required: false
       vn1:
              type: string
              description: "String 1"
