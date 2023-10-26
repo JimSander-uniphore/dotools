@@ -49,7 +49,7 @@ on:
              required: false
 
 jobs:
-  dumpenv-${{ github.GITHUB_RUN_NUMBER }}
+  dumpenv-${{ github.GITHUB_RUN_NUMBER }}:
     runs-on: ubuntu-latest
   
     env:
