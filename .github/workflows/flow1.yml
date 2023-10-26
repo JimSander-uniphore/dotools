@@ -46,10 +46,10 @@ on:
              required: false
 
 jobs:
+  job1: 
   runs-on: linux
   steps:
   - name: foo one
     run-name: foo run one
     run: |
       env
-
