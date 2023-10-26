@@ -1,6 +1,8 @@
 run-name: JDS flow1 ${{ github.GITHUB_RUN_ATTEMPT }}
 
 on:
+  push:
+
   workflow_dispatch:
     ## Max 10 inputs?
     inputs:
