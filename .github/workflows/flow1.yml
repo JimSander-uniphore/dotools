@@ -48,6 +48,11 @@ on:
 jobs:
   job1: 
   runs-on: linux
+  
+  env:
+    platform: azure
+    region: us
+
   steps:
   - name: foo one
     run-name: foo run one
