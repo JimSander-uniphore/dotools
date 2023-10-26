@@ -57,4 +57,4 @@ jobs:
     steps:
       - name: "foo one"
         run: |
-          env
+          env | sort
