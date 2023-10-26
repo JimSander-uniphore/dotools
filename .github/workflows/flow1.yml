@@ -46,7 +46,7 @@ on:
              required: false
 
 jobs:
-  runs-on: ubuntu-22.04
+  runs-on: linux
   steps:
   - name: foo one
     run-name: foo run one
