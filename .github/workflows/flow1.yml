@@ -53,7 +53,7 @@ jobs:
       platform: azure
       region: us
 
-  steps:
-    - name: foo one
-      run: |
-        env
+    steps:
+      - name: foo one
+        run: |
+          env
