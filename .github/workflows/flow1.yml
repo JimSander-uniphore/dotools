@@ -1,0 +1,61 @@
+name: JDS
+  run-name: JDS by ${{ github.foo }} 
+
+on:
+  workflow_dispatch:
+    ## Max 10 inputs?
+    inputs:
+      vs1:
+             type: string
+             description: "String 1"
+             required: false
+      vs2:
+             type: string
+             description: "String 2"
+             required: false
+      vs3:
+             type: string
+             description: "String 3"
+             required: false
+      vs4:
+             type: string
+             description: "String 4"
+             required: false
+      vs5:
+             type: string
+             description: "String _XX_"
+             required: false
+      vs6:
+             type: string
+             description: "String 6"
+             required: false
+      vs7:
+             type: string
+             description: "String 7"
+             required: false
+      vn1:
+             type: string
+             description: "String 1"
+             required: true
+      vn2:
+             type: string
+             description: "String 2"
+             required: false
+      vn3:
+             type: string
+             description: "String 3"
+             required: false
+      vn4:
+             type: string
+             description: "String 4"
+             required: false
+
+  workflow_call:
+  jobs:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: foo one
+      run-name: foo run one
+      run: |
+      env
+
