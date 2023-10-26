@@ -47,11 +47,11 @@ on:
 
 jobs:
   job1: 
-  runs-on: linux
+    runs-on: linux
   
-  env:
-    platform: azure
-    region: us
+    env:
+      platform: azure
+      region: us
 
   steps:
   - name: foo one
