@@ -68,5 +68,4 @@ jobs:
       run: |
         env | sort
         echo "# env.plat: ${{ env.platform }}"
-        echo "# plat: ${{ platform }}"
   
