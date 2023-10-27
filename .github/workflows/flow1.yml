@@ -57,15 +57,16 @@ jobs:
       region: us
 
     steps:
-      - name: "env sort"
-        run: |
-          env | sort
-          echo "# env: ${{ input.vn1 }}"
+    - name: "env sort"
+      run: |
+        env | sort
+        echo "# env: ${{ input.vn1 }}"
+
   dumpenv-2:
     runs-on: ubuntu-latest
     steps:
-      - name: "other env"
-        run: |
-          env | sort
-          echo "# plat: ${{ env.platform }}"
+    - name: "other env"
+      run: |
+        env | sort
+        echo "# plat: ${{ env.platform }}"
   
