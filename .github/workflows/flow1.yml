@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
   
     env:
-      platform: azure
+      platform: ${{ input.platform:-azure }}
       region: us
 
     steps:
