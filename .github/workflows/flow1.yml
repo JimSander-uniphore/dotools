@@ -48,13 +48,13 @@ on:
              required: false
 
 jobs:
-  env:
-    platform: azure
-    region: us
-
   dumpenv-1:
     runs-on: ubuntu-latest
   
+    env:
+      platform: azure
+      region: us
+
     steps:
     - name: "env sort"
       run: |
