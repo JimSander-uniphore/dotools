@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: other env
-       run: |
-        env | sort
-        echo "# plat: ${{ env.platform }}"
+        run: |
+          env | sort
+          echo "# plat: ${{ env.platform }}"
   
