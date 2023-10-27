@@ -21,9 +21,10 @@ on:
              type: string
              description: "String 4"
              required: false
-      vs5:
+      provider:
              type: string
-             description: "String _XX_"
+             default: "azure"
+             description: "String provider"
              required: false
       vs6:
              type: string
@@ -59,7 +60,9 @@ jobs:
     - name: "env sort"
       run: |
         env | sort
-        echo "# env: ${{ inputs.vn1 }}"
+        echo "# input.vn1: ${{ inputs.vn1 }}"
+        echo "PLATFORM=${{ env.platform ]]" >> $GITHUB_ENV
+        echo "PROVIDER=${{ env.provider ]]" >> $GITHUB_ENV
 
   dumpenv-2:
     runs-on: ubuntu-latest
