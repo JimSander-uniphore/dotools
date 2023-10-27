@@ -107,7 +107,7 @@ jobs:
         env | sort
         echo "# input.vn1: ${{ inputs.vn1 }}"
         echo "PLATFORM=${{ env.platform }}" >> $GITHUB_ENV
-        echo "PROVIDER=${{ input.provider }}" >> $GITHUB_ENV
+        echo "PROVIDER=${{ inputs.provider }}" >> $GITHUB_ENV
 
   dumpenv-2:
     runs-on: ubuntu-latest
