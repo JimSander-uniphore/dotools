@@ -49,8 +49,8 @@ on:
 
 jobs:
   env:
-  platform: azure
-  region: us
+    platform: azure
+    region: us
 
   dumpenv-1:
     runs-on: ubuntu-latest
