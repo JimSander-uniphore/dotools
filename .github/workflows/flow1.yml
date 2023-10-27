@@ -48,6 +48,51 @@ on:
              description: "String 4"
              required: false
 
+  workflow_call:
+    inputs:
+      vs1:
+             type: string
+             description: "String 1"
+             required: false
+      vs2:
+             type: string
+             description: "String 2"
+             required: false
+      vs3:
+             type: string
+             description: "String 3"
+             required: false
+      vs4:
+             type: string
+             description: "String 4"
+             required: false
+      provider:
+             type: string
+             default: "azure"
+             description: "String provider"
+             required: false
+      vs6:
+             type: string
+             description: "String 6"
+             required: false
+      vn1:
+             type: number
+             description: "String 1"
+             default: 3
+             required: true
+      vn2:
+             type: number
+             description: "String 2"
+             required: false
+      vn3:
+             type: number
+             description: "String 3"
+             required: false
+      vn4:
+             type: number
+             description: "String 4"
+             required: false
+
 jobs:
   dumpenv-1:
     runs-on: ubuntu-latest
