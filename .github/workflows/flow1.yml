@@ -63,8 +63,9 @@ jobs:
           echo "# env: ${{ input.vn1 }}"
   dumpenv-2:
     runs-on: ubuntu-latest
-    - name: other env
-      run: |
+    steps:
+      - name: other env
+       run: |
         env | sort
         echo "# plat: ${{ env.platform }}"
   
