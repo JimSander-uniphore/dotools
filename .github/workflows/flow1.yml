@@ -57,6 +57,6 @@ jobs:
       region: us
 
     steps:
-      - name: "foo one"
+      - name: env sort
         run: |
           env | sort
