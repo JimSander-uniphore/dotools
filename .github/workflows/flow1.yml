@@ -60,6 +60,7 @@ jobs:
     - name: "env sort"
       run: |
         env | sort
+        echo "# env: ${{ inputs.vn1 }}"
 
   dumpenv-2:
     runs-on: ubuntu-latest
