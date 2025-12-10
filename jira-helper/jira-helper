@@ -1,0 +1,253 @@
+#!/usr/bin/env bash
+# jira-helper CLI wrapper
+# Makes jira-helper functions available as a standalone command
+
+# Detect if being sourced vs executed
+# Use return when sourced, exit when executed
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  _JIRA_HELPER_SOURCED=false
+  # Only set -e when executed, not when sourced (to avoid affecting parent shell)
+  set -e
+else
+  _JIRA_HELPER_SOURCED=true
+fi
+
+# Helper function for safe exit/return
+_jh_exit() {
+  if $_JIRA_HELPER_SOURCED; then
+    return "$1"
+  else
+    exit "$1"
+  fi
+}
+
+# Determine script location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+JIRA_HELPER_LIB="${SCRIPT_DIR}/jira-helper.sh"
+
+# Source the jira-helper library (suppressing output)
+if [ -f "$JIRA_HELPER_LIB" ]; then
+  source "$JIRA_HELPER_LIB" >/dev/null 2>&1
+else
+  echo "Error: jira-helper.sh not found at ${JIRA_HELPER_LIB}"
+  _jh_exit 1
+fi
+
+# Function to list available commands
+list_commands() {
+  cat << 'EOF'
+jira-helper - Atlassian API Helper CLI
+
+Three ways to use jira-helper:
+  1. CLI:   jira-helper show-jira-crisis PANK
+  2. Shell: source jira-helper.sh && show_jira_crisis PANK
+  3. Claude: Just ask "show jira crisis"
+
+Usage: jira-helper <command> [args...]
+
+Available Commands:
+
+ISSUE OPERATIONS:
+  get-jira-issue <key>              Fetch issue (JSON output)
+  show-jira-issue <key>             Show issue (formatted text)
+  show-jira-crisis [project]        Show ALL open issues (full backlog scope)
+  create-jira-ticket <args...>      Create new ticket
+  add-jira-comment <key> <text>     Add comment to issue
+
+REPORTING:
+  eod-report [days] [format]        Generate end of day report
+  metrics-volume [days]             Team volume metrics
+  metrics-personal [email]          Personal workload metrics
+  metrics-painpoints [project]      Blocked/unassigned issues
+  metrics-creation [days]           Creation metrics
+  metrics-age [project] [limit]     Age analysis
+  metrics-priority [project]        Priority distribution
+  metrics-churn [days]              Reopened tickets
+
+CONFLUENCE:
+  get-confluence-page <id>          Fetch Confluence page
+  search-confluence [days]          Search your Confluence updates
+
+UTILITY:
+  help                              Show this help message
+  stats                             Show usage statistics
+  version                           Show current version and git info
+  update                            Update jira-helper from source repo
+
+Examples:
+  jira-helper show-jira-issue PANK-1797
+  jira-helper show-jira-crisis PANK
+  jira-helper eod-report 1 slack
+  jira-helper metrics-volume 7
+
+For more details: jira-helper help
+EOF
+}
+
+# If sourced (no arguments provided), just make functions available
+if $_JIRA_HELPER_SOURCED && [ $# -eq 0 ]; then
+  return 0
+fi
+
+# Show help if no arguments or help requested (when executed)
+if [ $# -eq 0 ] || [ "$1" = "help" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+  list_commands
+  _jh_exit 0
+fi
+
+# Map CLI commands to function names (convert kebab-case to snake_case)
+COMMAND="$1"
+shift
+
+case "$COMMAND" in
+  # Issue operations
+  get-jira-issue)
+    get_jira_issue "$@"
+    ;;
+  show-jira-issue)
+    show_jira_issue "$@"
+    ;;
+  show-jira-crisis)
+    show_jira_crisis "$@"
+    ;;
+  create-jira-ticket)
+    create_jira_ticket "$@"
+    ;;
+  add-jira-comment)
+    add_jira_comment "$@"
+    ;;
+
+  # Reporting
+  eod-report)
+    eod_report "$@"
+    ;;
+  metrics-volume)
+    jira_metrics_volume "$@"
+    ;;
+  metrics-personal)
+    jira_metrics_personal "$@"
+    ;;
+  metrics-painpoints)
+    jira_metrics_painpoints "$@"
+    ;;
+  metrics-creation)
+    jira_metrics_creation "$@"
+    ;;
+  metrics-age)
+    jira_metrics_age "$@"
+    ;;
+  metrics-priority)
+    jira_metrics_priority "$@"
+    ;;
+  metrics-churn)
+    jira_metrics_churn "$@"
+    ;;
+
+  # Confluence
+  get-confluence-page)
+    get_confluence_page "$@"
+    ;;
+  search-confluence)
+    search_my_confluence_updates "$@"
+    ;;
+
+  # Utility
+  stats)
+    jira_helper_stats "$@"
+    ;;
+  version)
+    echo "jira-helper version info:"
+    echo ""
+
+    # Try to read VERSION file from install directory first
+    VERSION_FILE="$(dirname "$JIRA_HELPER_PATH")/VERSION"
+    if [ -f "$VERSION_FILE" ]; then
+      # shellcheck source=/dev/null
+      source "$VERSION_FILE" 2>/dev/null || true
+
+      echo "Version:     ${JIRA_HELPER_VERSION:-unknown}"
+      echo "Commit:      ${JIRA_HELPER_COMMIT:-unknown}"
+      echo "Branch:      ${JIRA_HELPER_BRANCH:-unknown}"
+      echo "Installed:   ${JIRA_HELPER_INSTALL_DATE:-unknown}"
+      echo "Install dir: $(dirname "$JIRA_HELPER_PATH")"
+
+      # If git root is accessible, show live git status
+      if [ -n "$JIRA_HELPER_GIT_ROOT" ] && [ -d "${JIRA_HELPER_GIT_ROOT}/.git" ]; then
+        echo ""
+        echo "Source repository status:"
+        echo "Git root:    ${JIRA_HELPER_GIT_ROOT}"
+        echo "Source dir:  ${JIRA_HELPER_SOURCE_DIR}"
+        echo "Live commit: $(git -C "$JIRA_HELPER_GIT_ROOT" rev-parse --short HEAD 2>/dev/null || echo 'unknown')"
+        echo "Live branch: $(git -C "$JIRA_HELPER_GIT_ROOT" branch --show-current 2>/dev/null || echo 'detached')"
+      fi
+    else
+      # Fallback to old behavior if VERSION file doesn't exist
+      if [ -d "${SCRIPT_DIR}/.git" ]; then
+        echo "Git branch:  $(git -C "$SCRIPT_DIR" branch --show-current 2>/dev/null || echo 'detached')"
+        echo "Git commit:  $(git -C "$SCRIPT_DIR" rev-parse --short HEAD 2>/dev/null || echo 'unknown')"
+        echo "Latest tag:  $(git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null || echo 'no tags')"
+        echo "Source dir:  ${SCRIPT_DIR}"
+        echo "Install dir: $(dirname "$JIRA_HELPER_PATH")"
+      else
+        echo "⚠ VERSION file not found and not a git repository"
+        echo "Install dir: $(dirname "$JIRA_HELPER_PATH")"
+        echo ""
+        echo "Run install.sh again to capture version metadata"
+      fi
+    fi
+    ;;
+  update)
+    if [ ! -d "${SCRIPT_DIR}/.git" ]; then
+      echo "Error: Not a git repository, cannot update"
+      _jh_exit 1
+    fi
+
+    echo "Updating jira-helper from source repository..."
+    echo ""
+
+    cd "$SCRIPT_DIR" || _jh_exit 1
+
+    # Fetch latest changes
+    echo "Fetching latest changes..."
+    git fetch origin || _jh_exit 1
+
+    # Show what's available
+    CURRENT_BRANCH=$(git branch --show-current)
+    BEHIND=$(git rev-list --count HEAD..origin/"$CURRENT_BRANCH" 2>/dev/null || echo "0")
+
+    if [ "$BEHIND" -eq 0 ]; then
+      echo "Already up to date on branch: $CURRENT_BRANCH"
+      _jh_exit 0
+    fi
+
+    echo "Updates available: $BEHIND commits behind origin/$CURRENT_BRANCH"
+    echo ""
+    git log --oneline HEAD..origin/"$CURRENT_BRANCH" | head -10
+    echo ""
+
+    # Check for local changes
+    if ! git diff-index --quiet HEAD --; then
+      echo "Local modifications detected, stashing..."
+      git stash push -m "jira-helper auto-update $(date +%Y%m%d-%H%M%S)"
+    fi
+
+    # Pull updates
+    echo "Pulling updates..."
+    git pull origin "$CURRENT_BRANCH" || _jh_exit 1
+
+    # Run installer
+    echo ""
+    echo "Running installer..."
+    bash "${SCRIPT_DIR}/install.sh" || _jh_exit 1
+
+    echo ""
+    echo "Update complete. Changes are live (no shell restart needed)."
+    ;;
+
+  *)
+    echo "Error: Unknown command '$COMMAND'"
+    echo ""
+    echo "Run 'jira-helper' or 'jira-helper help' to see available commands"
+    _jh_exit 1
+    ;;
+esac

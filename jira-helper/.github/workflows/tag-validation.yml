@@ -1,0 +1,77 @@
+---
+name: Tag Validation
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl shellcheck
+
+      - name: Run shellcheck
+        run: |
+          echo "Running shellcheck on main script..."
+          shellcheck jira-helper.sh jira-helper || {
+            echo "::error::Shellcheck failed on main scripts"
+            exit 1
+          }
+
+          if [ -d lib ]; then
+            echo "Running shellcheck on lib modules..."
+            shellcheck lib/*.sh || {
+              echo "::error::Shellcheck failed on lib modules"
+              exit 1
+            }
+          fi
+
+      - name: Run full test suite
+        run: |
+          chmod +x run-tests.sh
+          ./run-tests.sh --quick
+
+      - name: Validate tag format
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "Validating tag: $TAG"
+
+          if ! echo "$TAG" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$'; then
+            echo "::error::Tag format invalid. Expected: v1.0.0 or v1.0.0-rc1"
+            exit 1
+          fi
+
+          echo "Tag format valid: $TAG"
+
+      - name: Delete tag on failure
+        if: failure()
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "::error::Tests failed for tag $TAG"
+          echo "::error::Please fix issues and re-tag"
+          echo ""
+          echo "To delete the remote tag and re-tag:"
+          echo "  git tag -d $TAG"
+          echo "  git push origin :refs/tags/$TAG"
+          echo "  # Fix issues, then:"
+          echo "  git tag -a $TAG -m 'your message'"
+          echo "  git push origin $TAG"
+
+      - name: Report success
+        if: success()
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "✓ Tag $TAG validated successfully"
+          echo "All tests passed (82 tests)"

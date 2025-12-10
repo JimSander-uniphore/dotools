@@ -98,8 +98,8 @@ jobs:
     runs-on: ubuntu-latest
   
     env:
-      platform: ${{ input.platform:-azure }}
-      region: us
+      platform: "azure"
+      region: "us"
 
     steps:
     - name: "env sort"

@@ -1,0 +1,18 @@
+==========================================
+*End of Day Report - {{DATE_LABEL}}*
+Date: {{REPORT_DATE}}
+User: {{USER_EMAIL}}
+==========================================
+
+*JIRA ISSUES UPDATED:*
+--------------------
+{{JIRA_ISSUES}}
+
+*CONFLUENCE PAGES UPDATED:*
+-------------------------
+{{CONFLUENCE_PAGES}}
+
+==========================================
+{{PERSONAL_STATS}} 
+*Summary:* {{JIRA_COUNT}} Jira issues, {{CONFLUENCE_COUNT}} Confluence pages
+==========================================

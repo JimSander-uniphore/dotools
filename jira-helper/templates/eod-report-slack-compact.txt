@@ -1,0 +1,6 @@
+What I did today:
+{{JIRA_ISSUES}}
+{{CONFLUENCE_PAGES}}
+
+Tomorrow:
+{{JIRA_ISSUES_NEXT}}

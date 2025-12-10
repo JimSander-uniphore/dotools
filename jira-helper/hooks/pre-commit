@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Pre-commit hook for jira-helper
+# Warns when example templates are modified
+
+# Check if any .example files are being committed
+EXAMPLE_FILES=$(git diff --cached --name-only | grep '\.example$')
+
+if [ -n "$EXAMPLE_FILES" ]; then
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "⚠️  WARNING: You are committing changes to example templates!"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Example templates should remain unchanged for user reference."
+  echo "Users copy these files to create their own custom templates."
+  echo ""
+  echo "Modified example templates:"
+  echo "$EXAMPLE_FILES" | sed 's/^/  /'
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  read -p "Are you sure you want to commit these changes? (y/N) " -n 1 -r
+  echo ""
+
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Commit aborted."
+    exit 1
+  fi
+
+  echo "Proceeding with commit..."
+fi
+
+exit 0
