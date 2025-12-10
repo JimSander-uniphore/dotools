@@ -1,0 +1,112 @@
+JIRA-HELPER QUICK REFERENCE
+===========================
+
+CRITICAL - MANDATORY WORKFLOW FOR CLAUDE CODE:
+  - ALWAYS read this file BEFORE attempting any Jira/Confluence operations
+  - NEVER invent function names not listed in this file
+  - NEVER use raw curl/API calls for Atlassian operations
+  - ALL required functions are provided - check this file first
+
+ALWAYS SOURCE FIRST:
+  source ~/.jira-helper/jira-helper.sh && <function_name>
+
+DISCOVERY:
+  jira_helper help           # Full help with all commands
+  declare -F | grep jira_    # List all jira_ functions
+
+CONFLUENCE OPERATIONS:
+  get_confluence_page <page-id>
+    Get page content (JSON)
+
+  create_confluence_page <space> "title" "<content>" [parent-id]
+    Create new page, optionally as child
+    Content: HTML or markdown string (auto-detected, not a file path)
+    Returns: new page ID
+
+  update_confluence_page <page-id> "<content>"
+    Append content to existing page
+    Content: HTML or markdown string (auto-detected, not a file path)
+
+  replace_confluence_page <page-id> "<content>"
+    Replace entire page content
+    Content: HTML or markdown string (auto-detected, not a file path)
+    Usage: replace_confluence_page 123456 "$(cat file.md)"
+
+  search_my_confluence_updates [days]
+    Find your recent page updates (default: 5 days)
+
+JIRA OPERATIONS:
+  get_jira_issue <TICKET-123> [--json]
+    Get issue details
+
+  show_jira_issue <TICKET-123>
+    Show formatted issue (not JSON)
+
+  create_jira_ticket <project> "summary" "description" "type"
+    Create new ticket
+    Types: Task, Story, Bug, Sub-task
+
+  add_jira_comment <TICKET-123> "comment" [--yes]
+    Add comment (--yes to skip prompts)
+
+  update_jira_issue <TICKET-123> <field> <value> [--yes]
+    Update field (priority, assignee, status)
+    Status accepts name (e.g., "In Progress") or transition ID
+
+  upload_jira_attachment <TICKET-123> <file-path> [--yes]
+    Upload file attachment to issue
+
+  search_my_jira_updates [days]
+    Find your recent issue updates
+
+INVESTIGATION DOCUMENTATION:
+  jira_investigation <file-or-ticket> [parent-page-id]
+    Publish investigation to Confluence
+    - Accepts markdown file or Jira ticket key
+    - Creates child page under parent (default: Platform Investigation Workflow)
+    - Auto-detects existing investigations by ticket key
+    - Subsequent updates nest under original investigation
+    - Automatically adds Confluence link to Jira ticket
+    Examples:
+      jira_investigation PANK-2079-investigation.md
+      jira_investigation PANK-2079
+      jira_investigation ~/markdowns/PANK-2081-investigation.md 4220125196
+
+REPORTS & METRICS:
+  eod_report [days] [format]
+    Generate end-of-day report
+    Formats: default, slack, slack_compact, slack_plain
+    Example: eod_report 1 slack_compact
+
+  jira_metrics_volume [days] [project]
+    Issue creation/closure volume
+
+  jira_metrics_personal [email]
+    Your workload analysis
+
+  jira_metrics_painpoints [project]
+    Blocked and unassigned tickets
+
+COMMON PATTERNS:
+  # Get and display Confluence page
+  source ~/.jira-helper/jira-helper.sh && get_confluence_page 4220125196 | jq -r '.title'
+
+  # Create child page
+  source ~/.jira-helper/jira-helper.sh && create_confluence_page "PE" "My Page" "<p>Content</p>" 4207738950
+
+  # Publish investigation document
+  source ~/.jira-helper/jira-helper.sh && jira_investigation ~/markdowns/PANK-2079-investigation.md
+
+  # Daily standup
+  source ~/.jira-helper/jira-helper.sh && eod_report 1 slack_compact
+
+  # Add Jira comment
+  source ~/.jira-helper/jira-helper.sh && add_jira_comment PANK-1797 "Working on this"
+
+CACHE LOCATION:
+  ~/.jira-helper/.atlassian-cache/
+
+CREDENTIALS:
+  ~/.jira (contains ATLASSIAN_USER, ATLASSIAN_DOCS, ATLASSIAN_SITE_URL)
+
+VERSION: 1.0.0-rc9

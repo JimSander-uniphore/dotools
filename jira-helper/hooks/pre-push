@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Pre-push hook to validate tags before pushing
+# Install: ln -sf ../../hooks/pre-push .git/hooks/pre-push
+
+set -e
+
+# Only run for jira-helper repo
+if ! git rev-parse --show-toplevel 2>/dev/null | grep -q "jira-helper"; then
+  exit 0
+fi
+
+# Check if we're pushing tags
+while read -r local_ref local_sha remote_ref remote_sha; do
+  # Check if this is a tag push
+  if [[ "$local_ref" =~ refs/tags/ ]]; then
+    tag="${local_ref#refs/tags/}"
+
+    echo "Validating tag: $tag"
+
+    # Check tag format
+    if ! echo "$tag" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$' >/dev/null; then
+      echo "ERROR: Invalid tag format: $tag"
+      echo "Expected format: v1.0.0 or v1.0.0-rc1"
+      exit 1
+    fi
+
+    # Run quick test suite
+    if [ -f "run-tests.sh" ]; then
+      echo "Running quick test suite..."
+      if ! ./run-tests.sh --quick; then
+        echo ""
+        echo "ERROR: Tests failed for tag $tag"
+        echo "Fix issues before pushing the tag"
+        exit 1
+      fi
+      echo "✓ All tests passed"
+    fi
+  fi
+done
+
+exit 0

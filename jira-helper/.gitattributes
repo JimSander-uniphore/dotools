@@ -1,0 +1,11 @@
+# Git attributes for jira-helper
+
+# Mark example templates with special diff driver
+# This helps identify when example files change
+templates/*.example diff=example-template
+
+# Ensure shell scripts have LF line endings
+*.sh text eol=lf
+
+# Ensure templates have LF line endings
+templates/*.txt text eol=lf

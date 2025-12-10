@@ -1,0 +1,18 @@
+# TEMPLATE: narrative
+# SLUG: narrative
+# DESCRIPTION: Narrative-style EOD report with contextual grouping and action-oriented format
+What I did {{DATE_LABEL}}:
+{{JIRA_ISSUES}}
+{{JIRA_ISSUES_CREATED}}
+
+CONFLUENCE PAGES Created:
+{{CONFLUENCE_PAGES}}
+
+[{{NEXT_BUSINESS_DAY_LABEL}}]:
+{{JIRA_ISSUES_NEXT}}
+
+Blocked:
+(Add blocked items with ticket numbers and brief description)
+
+Comments/Asks:
+  - *Summary: {{JIRA_COUNT}} Jira issues updated, {{CONFLUENCE_COUNT}} Confluence pages*

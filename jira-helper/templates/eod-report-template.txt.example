@@ -1,0 +1,55 @@
+# EXAMPLE TEMPLATE - Copy and customize this to create your own EOD report templates
+# This file is ignored by tab completion (ends with .example)
+#
+# METADATA FORMAT:
+# TEMPLATE: <name>          - Human-readable template name
+# SLUG: <slug>              - Short name for CLI usage (e.g., "eod 1 custom")
+# DESCRIPTION: <desc>       - Brief description of what this template does
+#
+# AVAILABLE VARIABLES:
+# {{DATE_LABEL}}            - "Today" or "Last N Days"
+# {{REPORT_DATE}}           - Current date/time
+# {{USER_EMAIL}}            - Your Atlassian user email
+# {{JIRA_ISSUES}}           - Issues you updated recently
+# {{JIRA_ISSUES_CREATED}}   - Issues you created recently
+# {{JIRA_ISSUES_NEXT}}      - Top 3 assigned issues by priority & age
+# {{CONFLUENCE_PAGES}}      - Pages you updated recently
+# {{JIRA_COUNT}}            - Count of updated issues
+# {{CONFLUENCE_COUNT}}      - Count of updated pages
+#
+# USAGE:
+# 1. Copy this file to a new name (without .example):
+#    cp eod-report-template.txt.example eod-report-custom.txt
+# 2. Edit metadata at top (TEMPLATE, SLUG, DESCRIPTION)
+# 3. Customize the template content below
+# 4. Use with: eod_report 1 custom
+#    or: jira-helper eod 1 custom
+
+# TEMPLATE: custom
+# SLUG: custom
+# DESCRIPTION: Example template showing all available variables
+==========================================
+End of Day Report - {{DATE_LABEL}}
+Date: {{REPORT_DATE}}
+User: {{USER_EMAIL}}
+==========================================
+
+ISSUES I UPDATED:
+-----------------
+{{JIRA_ISSUES}}
+
+ISSUES I CREATED:
+-----------------
+{{JIRA_ISSUES_CREATED}}
+
+MY NEXT PRIORITIES:
+-------------------
+{{JIRA_ISSUES_NEXT}}
+
+CONFLUENCE PAGES UPDATED:
+-------------------------
+{{CONFLUENCE_PAGES}}
+
+==========================================
+Summary: {{JIRA_COUNT}} Jira issues, {{CONFLUENCE_COUNT}} Confluence pages
+==========================================
